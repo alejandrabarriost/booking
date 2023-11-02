@@ -37,7 +37,7 @@ export default function Home(
         <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-3xl mb-4">
           Bookings:
         </h1>
-        <Bookings bookings={bookings} />
+        <Bookings bookings={bookings} updateBookings={updateBookings} />
       </div>
 
       <div>

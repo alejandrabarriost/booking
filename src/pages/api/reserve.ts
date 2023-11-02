@@ -19,5 +19,5 @@ export default async function handler(
 
   const response = await supabase.from("booking").select("*");
 
-  res.status(200).json(response.data);
+  res.status(201).json(response.data);
 }

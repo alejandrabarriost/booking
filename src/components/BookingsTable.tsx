@@ -2,16 +2,28 @@ import { Button } from "@booking/@components/ui/button";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@booking/@components/ui/table";
 
-export function BookingsTable(
-  { bookings }: { bookings: any[] } = { bookings: [] }
-) {
+export function BookingsTable({
+  bookings,
+  updateBookings,
+}: {
+  bookings: any[];
+  updateBookings: (newBookings: any[]) => void;
+}) {
+  const deleteBooking = async (id: string) => {
+    const response = await fetch("/api/delete-reserve", {
+      method: "DELETE",
+      body: JSON.stringify({ id: id }),
+    });
+
+    updateBookings(await response.json());
+  };
+
   return (
     <Table style={{ border: "1px solid lightgray" }}>
       <TableHeader>
@@ -37,7 +49,11 @@ export function BookingsTable(
             </TableCell>
             <TableCell className="font-medium">{booking.total_cost}</TableCell>
             <TableCell className="text-end">
-              <Button variant="destructive" size="sm">
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => deleteBooking(booking.id)}
+              >
                 Delete
               </Button>
             </TableCell>
