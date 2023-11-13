@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useAtom } from "jotai";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -56,6 +56,10 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
 
   const [total, setTotal] = useState(0);
 
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+
+  const [carBusyDays, setCarBusyDays] = useState<number[]>([]);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     await makeReservation(
       car!.id,
@@ -88,14 +92,46 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
     setTotal(result < 1 ? (car?.price_per_day as number) : result);
   };
 
+  const getCarAvailability = useCallback(async () => {
+    const response = await fetch(
+      `/api/get-car-availability?car_id=${car?.id}&month=${currentMonth}`
+    );
+
+    const data = await response.json();
+
+    setCarBusyDays(data.dates);
+  }, [car, currentMonth]);
+
+  useEffect(() => {
+    getCarAvailability();
+  }, [currentMonth]);
+
   return (
     <>
-      <p className="mb-4">
-        {car?.brand} - {car?.model}
-      </p>
-      <p className="mb-4">Price per day: ${car?.price_per_day}</p>
+      <div className="flex gap-1">
+        <p className="text-sm font-semibold tracking-tight">Model:</p>
+        <p className="text-sm">
+          {car?.brand} - {car?.model}
+        </p>
+      </div>
+      <div className="flex gap-1">
+        <p className="text-sm font-semibold tracking-tight">Price per day:</p>
+        <p className="text-sm">${car?.price_per_day}</p>
+      </div>
+      <div className="flex gap-1">
+        <p className="text-sm font-semibold tracking-tight">Engine:</p>
+        <p className="text-sm">{car?.displacement}</p>
+      </div>
+      <div className="flex gap-1">
+        <p className="text-sm font-semibold tracking-tight">Year:</p>
+        <p className="text-sm">{car?.year}</p>
+      </div>
+      <div className="flex gap-1">
+        <p className="text-sm font-semibold tracking-tight">Category:</p>
+        <p className="text-sm">{car?.category}</p>
+      </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="start_date"
@@ -129,7 +165,11 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
                         field.onChange(...args);
                         calculateTotal();
                       }}
+                      onMonthChange={month => setCurrentMonth(month.getMonth())}
                       initialFocus
+                      disabled={(date: Date) =>
+                        carBusyDays.includes(date.getDate())
+                      }
                     />
                   </PopoverContent>
                 </Popover>
@@ -170,6 +210,10 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
                         field.onChange(...args);
                         calculateTotal();
                       }}
+                      onMonthChange={month => setCurrentMonth(month.getMonth())}
+                      disabled={(date: Date) =>
+                        carBusyDays.includes(date.getDate())
+                      }
                       initialFocus
                     />
                   </PopoverContent>
@@ -179,7 +223,9 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
             )}
           />
           <div className="flex justify-between items-center">
-            <p>Estimated Total: ${total}</p>
+            <p className="text-sm font-semibold tracking-tight">
+              Estimated Total: ${total}
+            </p>
             <Button type="submit">Submit</Button>
           </div>
         </form>

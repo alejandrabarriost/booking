@@ -49,7 +49,7 @@ export function Menu() {
         <MenubarMenu>
           <MenubarTrigger
             style={{ marginLeft: "-15px" }}
-            className="font-bold lg:text-xl tracking-tight"
+            className="font-bold lg:text-xl tracking-tight cursor-pointer"
           >
             Booking.com
           </MenubarTrigger>
@@ -77,7 +77,9 @@ export function Menu() {
         </MenubarMenu>
         {session?.user && (
           <MenubarMenu>
-            <MenubarTrigger className="relative">Actions</MenubarTrigger>
+            <MenubarTrigger className="relative cursor-pointer">
+              Actions
+            </MenubarTrigger>
             <MenubarContent>
               <MenubarSub>
                 <MenubarSubTrigger className="cursor-pointer">
@@ -98,27 +100,29 @@ export function Menu() {
         )}
       </Menubar>
 
-      <TooltipProvider>
-        <Tooltip delayDuration={100}>
-          <TooltipTrigger asChild>
-            <Avatar className="mb-2 cursor-pointer">
-              <AvatarFallback>
-                {session?.user.username.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="scroll-m-20 text-sm font-bold tracking-tight">
-              User:
-            </p>{" "}
-            {session?.user.username} - {session?.user.role}
-            <p className="scroll-m-20 text-sm font-bold tracking-tight">
-              UserId:{" "}
-            </p>{" "}
-            {session?.user.id}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      {session?.user && (
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <Avatar className="mb-2 cursor-pointer">
+                <AvatarFallback>
+                  {session?.user?.username?.charAt(0)?.toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="scroll-m-20 text-sm font-bold tracking-tight">
+                User:
+              </p>{" "}
+              {session?.user?.username} - {session?.user?.role}
+              <p className="scroll-m-20 text-sm font-bold tracking-tight">
+                UserId:{" "}
+              </p>{" "}
+              {session?.user?.id}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </div>
   );
 }

@@ -98,9 +98,8 @@ export default function Cars({ cars }: CarsProps = { cars: [] }) {
                   <DialogHeader>
                     <DialogTitle className="mb-2">Booking Details:</DialogTitle>
                   </DialogHeader>
-                  <DialogDescription>
-                    <BookingForm makeReservation={makeReservation} car={car} />
-                  </DialogDescription>
+
+                  <BookingForm makeReservation={makeReservation} car={car} />
                 </DialogContent>
               </Dialog>
             </CardFooter>
