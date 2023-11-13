@@ -1,50 +1,39 @@
-import Bookings from "@booking/components/Bookings";
-import Cars from "@booking/components/Cars";
-import { supabase } from "@booking/supabase/client";
-import { useState } from "react";
+import { Button } from "@booking/@components/ui/button";
+import { sessionAtom } from "@booking/config/store";
+import { withSession } from "@booking/config/utils";
+import { useAtom } from "jotai";
 
-interface HomeProps {
-  bookings: any[];
-  cars: any[];
-}
+import Link from "next/link";
 
-export const getServerSideProps = async () => {
-  const [bookings, cars] = await Promise.all([
-    supabase.from("booking").select("*"),
-    supabase.from("cars").select("*"),
-  ]);
+export const getServerSideProps = withSession();
 
-  return {
-    props: {
-      bookings: bookings.data,
-      cars: cars.data,
-    },
-  };
-};
-
-export default function Home(
-  { bookings: _bookings, cars }: HomeProps = { bookings: [], cars: [] }
-) {
-  const [bookings, setBookings] = useState<any[]>(_bookings);
-
-  const updateBookings = (newBookings: any[]) => {
-    setBookings(newBookings);
-  };
+export default function Home() {
+  const [session] = useAtom(sessionAtom);
 
   return (
     <div>
-      <div className="mb-10">
-        <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-3xl mb-4">
-          Bookings:
-        </h1>
-        <Bookings bookings={bookings} updateBookings={updateBookings} />
-      </div>
+      <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-3xl mb-4">
+        Booking System
+      </h1>
 
-      <div>
-        <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-3xl mb-4">
-          Cars:
-        </h1>
-        <Cars cars={cars} updateBookings={updateBookings} />
+      <div className="flex gap-5 mt-10">
+        {!session && (
+          <div>
+            <Link href="/auth">
+              <Button>Sing in</Button>
+            </Link>
+            <Link href="/auth">
+              <Button variant="secondary">Sing up</Button>
+            </Link>
+          </div>
+        )}
+        {session && (
+          <div>
+            <Link href="/dashboard">
+              <Button>Dashboard</Button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

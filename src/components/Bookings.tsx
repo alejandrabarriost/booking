@@ -1,18 +1,18 @@
+import { Booking } from "@booking/types/booking";
 import { BookingsTable } from "./BookingsTable";
 
 interface BookingsProps {
-  bookings: any[];
-  updateBookings: (newBookings: any[]) => void;
+  bookings: Booking[];
 }
 
-export default function Bookings({ bookings, updateBookings }: BookingsProps) {
+export default function Bookings({ bookings }: BookingsProps) {
   if (bookings.length < 1) {
     return <div>No bookings</div>;
   }
 
   return (
     <div>
-      <BookingsTable bookings={bookings} updateBookings={updateBookings} />
+      <BookingsTable bookings={bookings} />
     </div>
   );
 }

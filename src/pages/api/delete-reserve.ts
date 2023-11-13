@@ -9,7 +9,5 @@ export default async function handler(
 
   await supabase.from("booking").delete().eq("id", body.id);
 
-  const response = await supabase.from("booking").select("*");
-
-  res.status(200).json(response.data);
+  res.status(200).end();
 }
