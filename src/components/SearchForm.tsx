@@ -20,20 +20,24 @@ export default function SearchForm(
       return;
     }
 
-    const response = await fetch(`/api/search-car?term=${e.target.value}`);
+    try {
+      const response = await fetch(`/api/search-car?term=${e.target.value}`);
 
-    const results = await response.json();
+      const results = await response.json();
 
-    onResults(results);
+      onResults(results);
+    } catch (error) {
+      onResults([]);
+    }
   };
 
   return (
-    <form>
+    <form onSubmit={(e) => e.preventDefault()}>
       <div className="grid gap-4">
         <div className="grid gap-4">
           <Input
             name="search"
-            placeholder="Search term..."
+            placeholder="Search by model or brand..."
             onChange={debounce(onSearchTermChange, 500)}
           />
         </div>

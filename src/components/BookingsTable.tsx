@@ -1,4 +1,6 @@
 import { useRouter } from "next/router";
+import { useAtom } from "jotai";
+
 import { Button } from "@booking/@components/ui/button";
 import {
   Table,
@@ -10,7 +12,6 @@ import {
 } from "@booking/@components/ui/table";
 import { sessionAtom } from "@booking/config/store";
 import { Booking, Car, User } from "@booking/types/booking";
-import { useAtom } from "jotai";
 
 export function BookingsTable({ bookings }: { bookings: Booking[] }) {
   const _bookings = bookings as Array<
@@ -44,7 +45,7 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
           <TableHead>Category</TableHead>
           <TableHead>Year</TableHead>
           {session?.user.role === "admin" && (
-            <TableHead className="text-end">Action</TableHead>
+            <TableHead className="text-center">Action</TableHead>
           )}
         </TableRow>
       </TableHeader>

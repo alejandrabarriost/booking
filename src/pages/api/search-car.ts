@@ -11,18 +11,25 @@ export default async function handler(
 
   const searchString = queryParams.term;
 
-  const { data, error } = await supabase
-    .from("cars")
-    .select("*")
-    .textSearch(
-      "model, year, category, displacement, brand",
-      `'${searchString}'`,
-      { config: "english" },
-    );
+  const searchPromises = [
+    supabase.from("cars").select("*").textSearch("model", `'${searchString}'`),
+    supabase.from("cars").select("*").textSearch("brand", `'${searchString}'`),
+  ];
 
-  if (error) {
-    return res.status(500).json({ error });
+  const [modelResult, brandResult] = await Promise.all(searchPromises);
+
+  if (modelResult.error || brandResult.error) {
+    return res.status(500).json({
+      error: modelResult.error || brandResult.error,
+    });
   }
 
-  res.status(200).json(data);
+  const resultsMerged = modelResult?.data.concat(brandResult.data);
+
+  //remove duplicates from resultsMerged
+  const resultsMergedFiltered = resultsMerged.filter(
+    (car, index, self) => index === self.findIndex((c) => c.id === car.id),
+  );
+
+  res.status(200).json(resultsMergedFiltered);
 }

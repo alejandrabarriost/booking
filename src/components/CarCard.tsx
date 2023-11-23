@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { useAtom } from "jotai";
+
 import { Button } from "@booking/@components/ui/button";
 import {
   Card,
@@ -19,7 +21,6 @@ import {
 import { Separator } from "@booking/@components/ui/separator";
 import { sessionAtom } from "@booking/config/store";
 import { Car } from "@booking/types/booking";
-import { useAtom } from "jotai";
 
 import { BookingForm } from "./BookingForm";
 
@@ -76,7 +77,7 @@ export default function CarCard({
         </p>
         <Separator />
         <p className="text-md font-semibold tracking-tight">
-          Engine: {car.displacement}
+          Engine: {car.displacement === "0" ? "Electric" : car.displacement}
         </p>
         <Separator />
         <p className="text-md font-semibold tracking-tight">
@@ -85,19 +86,30 @@ export default function CarCard({
         <Separator />
         <p className="text-md font-semibold tracking-tight">Year: {car.year}</p>
         <Separator />
+
+        <img
+          src={car.image!}
+          alt="car_img"
+          className="h-40 w-100 mt-4"
+          style={{ borderRadius: "8px" }}
+        />
       </CardContent>
 
       <CardFooter className="block">
         <Dialog open={open} onOpenChange={(_open) => setOpen(_open)}>
           <div className="flex justify-between">
+            {router.pathname === "/dashboard/cars" &&
+              session?.user.role === "admin" && (
+                <Button
+                  onClick={() => deleteCar(car.id)}
+                  className="hover:bg-destructive"
+                >
+                  Delete
+                </Button>
+              )}
             <DialogTrigger asChild>
               <Button>Reserve</Button>
             </DialogTrigger>
-
-            {router.pathname === "/dashboard/cars" &&
-              session?.user.role === "admin" && (
-                <Button onClick={() => deleteCar(car.id)}>Delete</Button>
-              )}
           </div>
           <DialogContent>
             <DialogHeader>

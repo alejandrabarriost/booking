@@ -12,6 +12,7 @@ import {
 } from "@booking/@components/ui/dialog";
 import { Separator } from "@booking/@components/ui/separator";
 import Cars from "@booking/components/Cars";
+import { CreateCarForm } from "@booking/components/CreateCarForm";
 import SearchForm from "@booking/components/SearchForm";
 import Title from "@booking/components/Title";
 import { sessionOptions } from "@booking/config/session";
@@ -56,9 +57,10 @@ export default function CarsPage({ cars: _cars }: CarsProps) {
             <DialogHeader>
               <DialogTitle>Add a new car:</DialogTitle>
               <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                Create a new car and start booking it!
               </DialogDescription>
+
+              <CreateCarForm className="mt-10" />
             </DialogHeader>
           </DialogContent>
         </Dialog>
@@ -66,6 +68,7 @@ export default function CarsPage({ cars: _cars }: CarsProps) {
       <Separator className="mt-5 mb-5" />
 
       <div className="mt-5 mb-5">
+        <Title className="mt-2 mb-2">Search:</Title>
         <SearchForm onResults={onResults} resetCarList={resetCarList} />
       </div>
 

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useAtom } from "jotai";
+
 import { Avatar, AvatarFallback } from "@booking/@components/ui/avatar";
 import {
   Menubar,
@@ -20,7 +22,6 @@ import {
   TooltipTrigger,
 } from "@booking/@components/ui/tooltip";
 import { sessionAtom, store } from "@booking/config/store";
-import { useAtom } from "jotai";
 
 export function Menu() {
   const router = useRouter();
@@ -41,7 +42,7 @@ export function Menu() {
         <MenubarMenu>
           <MenubarTrigger
             style={{ marginLeft: "-15px" }}
-            className="font-bold lg:text-xl tracking-tight cursor-pointer mb-2"
+            className="font-bold lg:text-xl tracking-tight cursor-pointer mb-1"
           >
             Booking.com
           </MenubarTrigger>
@@ -59,12 +60,11 @@ export function Menu() {
             <Link href="/">
               <MenubarItem className="cursor-pointer">Home</MenubarItem>
             </Link>
-            <MenubarItem className="cursor-pointer">About Music</MenubarItem>
+            <MenubarItem className="cursor-pointer">About Booking</MenubarItem>
             <MenubarSeparator />
             <MenubarItem className="cursor-pointer">
               Preferences... <MenubarShortcut>⌘</MenubarShortcut>
             </MenubarItem>
-            <MenubarSeparator />
           </MenubarContent>
         </MenubarMenu>
         {session?.user && (
@@ -78,7 +78,10 @@ export function Menu() {
                   New
                 </MenubarSubTrigger>
                 <MenubarSubContent className="w-[230px]">
-                  <MenubarItem className="cursor-pointer">
+                  <MenubarItem
+                    className="cursor-pointer"
+                    onClick={() => router.push("/dashboard")}
+                  >
                     Reserve <MenubarShortcut>⌘N</MenubarShortcut>
                   </MenubarItem>
                 </MenubarSubContent>

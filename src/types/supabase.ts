@@ -61,6 +61,7 @@ export interface Database {
           created_at: string
           displacement: string | null
           id: string
+          image: string | null
           model: string | null
           price_per_day: number | null
           year: number | null
@@ -71,6 +72,7 @@ export interface Database {
           created_at?: string
           displacement?: string | null
           id?: string
+          image?: string | null
           model?: string | null
           price_per_day?: number | null
           year?: number | null
@@ -81,6 +83,7 @@ export interface Database {
           created_at?: string
           displacement?: string | null
           id?: string
+          image?: string | null
           model?: string | null
           price_per_day?: number | null
           year?: number | null
