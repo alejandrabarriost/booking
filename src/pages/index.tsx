@@ -1,9 +1,8 @@
+import Link from "next/link";
 import { Button } from "@booking/@components/ui/button";
 import { sessionAtom } from "@booking/config/store";
 import { withSession } from "@booking/config/utils";
 import { useAtom } from "jotai";
-
-import Link from "next/link";
 
 export const getServerSideProps = withSession();
 

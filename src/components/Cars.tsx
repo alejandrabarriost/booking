@@ -1,34 +1,13 @@
-import { Button } from "@booking/@components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@booking/@components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@booking/@components/ui/dialog";
-import { BookingForm } from "./BookingForm";
-import { useEffect, useRef, useState } from "react";
-import type { Car } from "@booking/types/booking";
-import { Separator } from "@booking/@components/ui/separator";
 import { useRouter } from "next/router";
-import { selectedCarAtom, store } from "@booking/config/store";
+import type { Car } from "@booking/types/booking";
+
+import CarCard from "./CarCard";
 
 interface CarsProps {
   cars: Car[];
 }
 
 export default function Cars({ cars }: CarsProps = { cars: [] }) {
-  const [open, setOpen] = useState(false);
-
   const router = useRouter();
 
   const makeReservation = async (
@@ -36,7 +15,7 @@ export default function Cars({ cars }: CarsProps = { cars: [] }) {
     start_date: Date,
     end_date: Date,
     total_cost: number,
-    user_id: string
+    user_id: string,
   ) => {
     await fetch("/api/reserve", {
       method: "POST",
@@ -49,61 +28,20 @@ export default function Cars({ cars }: CarsProps = { cars: [] }) {
       }),
     });
 
-    setOpen(false);
-
     router.reload();
   };
 
   if (cars.length < 1) {
-    return <div>No cars</div>;
+    return <p>No cars...</p>;
   }
 
   return (
-    <div className="grid grid-cols-3 gap-3">
-      {cars.map(car => {
+    <div className="grid grid-cols-3 gap-4 xxs:grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
+      {cars.map((car) => {
         return (
-          <Card key={car.id}>
-            <CardHeader>
-              <CardTitle>{car.model}</CardTitle>
-              <CardDescription>{car.brand}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-md font-semibold tracking-tight">
-                Price Per Day: ${car.price_per_day}
-              </p>
-              <Separator />
-              <p className="text-md font-semibold tracking-tight">
-                Engine: {car.displacement}
-              </p>
-              <Separator />
-              <p className="text-md font-semibold tracking-tight">
-                Category: {car.category}
-              </p>
-              <Separator />
-              <p className="text-md font-semibold tracking-tight">
-                Year: {car.year}
-              </p>
-              <Separator />
-            </CardContent>
-            <CardFooter>
-              <Dialog open={open} onOpenChange={_open => setOpen(_open)}>
-                <DialogTrigger
-                  onClick={() => store.set(selectedCarAtom, car)}
-                  asChild
-                >
-                  <Button>Reserve</Button>
-                </DialogTrigger>
-
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle className="mb-2">Booking Details:</DialogTitle>
-                  </DialogHeader>
-
-                  <BookingForm makeReservation={makeReservation} car={car} />
-                </DialogContent>
-              </Dialog>
-            </CardFooter>
-          </Card>
+          <div key={car.id}>
+            <CarCard car={car} makeReservation={makeReservation} />
+          </div>
         );
       })}
     </div>

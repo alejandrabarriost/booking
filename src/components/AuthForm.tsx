@@ -1,21 +1,21 @@
-import { toast } from "@booking/@components/ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useRouter } from "next/router";
+import { Button } from "@booking/@components/ui/button";
 import {
+  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  Form,
 } from "@booking/@components/ui/form";
-import { Loader, Github } from "lucide-react";
 import { Input } from "@booking/@components/ui/input";
+import { toast } from "@booking/@components/ui/use-toast";
 import { cn } from "@booking/lib/util";
-import { Button } from "@booking/@components/ui/button";
-import { useRouter } from "next/router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Github, Loader } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   mode: "signin" | "signup";
@@ -54,7 +54,7 @@ export function UserAuthForm({
         {
           body: JSON.stringify(data),
           method: "POST",
-        }
+        },
       );
 
       if (response.status === 400) {

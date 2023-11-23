@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { Button } from "@booking/@components/ui/button";
 import {
   Table,
@@ -10,7 +11,6 @@ import {
 import { sessionAtom } from "@booking/config/store";
 import { Booking, Car, User } from "@booking/types/booking";
 import { useAtom } from "jotai";
-import { useRouter } from "next/router";
 
 export function BookingsTable({ bookings }: { bookings: Booking[] }) {
   const _bookings = bookings as Array<
@@ -49,7 +49,7 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {_bookings.map(booking => (
+        {_bookings.map((booking) => (
           <TableRow key={booking.id}>
             <TableCell className="font-medium">
               {booking.id.substring(0, 8)}...

@@ -1,7 +1,7 @@
-import { supabase } from "@booking/supabase/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { hash } from "argon2";
 import { sessionOptions } from "@booking/config/session";
+import { supabase } from "@booking/supabase/client";
+import { hash } from "argon2";
 import { withIronSessionApiRoute } from "iron-session/next";
 
 async function handler(req: NextApiRequest, res: NextApiResponse<any>) {

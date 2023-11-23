@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import type { NextApiRequest, NextApiResponse } from "next";
 import { sessionOptions } from "@booking/config/session";
 import { supabase } from "@booking/supabase/client";
 import { withIronSessionApiRoute } from "iron-session/next";
-import type { NextApiRequest, NextApiResponse } from "next";
 
 async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const body = JSON.parse(req.body);

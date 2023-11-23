@@ -1,5 +1,4 @@
-import { IronSessionOptions } from "iron-session";
-import { withIronSessionSsr } from "iron-session/next";
+import type { IronSessionOptions } from "iron-session";
 
 export const sessionOptions: IronSessionOptions = {
   cookieName: "booking-system",
@@ -14,7 +13,7 @@ export const sessionOptions: IronSessionOptions = {
 export type Session = {
   user: {
     username: string;
-    role: string;
+    role: "admin" | "customer";
     id: string;
   };
 };

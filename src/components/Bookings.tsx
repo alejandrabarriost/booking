@@ -1,4 +1,5 @@
 import { Booking } from "@booking/types/booking";
+
 import { BookingsTable } from "./BookingsTable";
 
 interface BookingsProps {

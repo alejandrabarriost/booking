@@ -1,12 +1,12 @@
 import Bookings from "@booking/components/Bookings";
 import Cars from "@booking/components/Cars";
-import { supabase } from "@booking/supabase/client";
-import { useState } from "react";
-import { withIronSessionSsr } from "iron-session/next";
+import Title from "@booking/components/Title";
 import { sessionOptions } from "@booking/config/session";
 import { sessionAtom } from "@booking/config/store";
-import { useAtom } from "jotai";
+import { supabase } from "@booking/supabase/client";
 import type { Booking, Car } from "@booking/types/booking";
+import { withIronSessionSsr } from "iron-session/next";
+import { useAtom } from "jotai";
 
 interface HomeProps {
   bookings: Booking[];
@@ -29,7 +29,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
       username,
       role
     )
-    `)
+    `),
     );
   } else {
     promises.push(
@@ -41,9 +41,9 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
       cars:car_id (
         *
       )
-      `
+      `,
         )
-        .eq("user_id", req.session.user.id)
+        .eq("user_id", req.session.user.id),
     );
   }
 
@@ -64,16 +64,14 @@ export default function Dashboard({ bookings, cars }: HomeProps) {
   return (
     <div>
       <div className="mb-10">
-        <h1 className="scroll-m-20 text-xl font-bold tracking-tight lg:text-xl mb-4">
+        <Title className="mb-4">
           {session?.user.role === "admin" ? "All Bookings :" : "My Bookings :"}
-        </h1>
+        </Title>
         <Bookings bookings={bookings} />
       </div>
 
       <div>
-        <h1 className="scroll-m-20 text-xl font-bold tracking-tight lg:text-xl mb-4">
-          Cars Available To Book :
-        </h1>
+        <Title className="mb-4">Cars Available To Book :</Title>
         <Cars cars={cars} />
       </div>
     </div>

@@ -1,12 +1,12 @@
-import { buttonVariants } from "@booking/@components/ui/button";
-import { UserAuthForm } from "@booking/components/AuthForm";
-import { withSession } from "@booking/config/utils";
-import { cn } from "@booking/lib/util";
+import { useState } from "react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { buttonVariants } from "@booking/@components/ui/button";
+import { UserAuthForm } from "@booking/components/AuthForm";
+import { withSession } from "@booking/config/utils";
+import { cn } from "@booking/lib/util";
 
 export const metadata: Metadata = {
   title: "Authentication",
@@ -41,12 +41,12 @@ export default function AuthenticationPage() {
       <div className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           onClick={() =>
-            setMode(prevMode => (prevMode === "signin" ? "signup" : "signin"))
+            setMode((prevMode) => (prevMode === "signin" ? "signup" : "signin"))
           }
           href="#"
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "absolute right-4 top-4 md:right-8 md:top-8"
+            "absolute right-4 top-4 md:right-8 md:top-8",
           )}
         >
           {mode === "signin" ? "Sign up" : "Sign in"}

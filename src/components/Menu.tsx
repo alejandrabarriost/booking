@@ -1,17 +1,11 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@booking/@components/ui/avatar";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { Avatar, AvatarFallback } from "@booking/@components/ui/avatar";
 import {
   Menubar,
-  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
-  MenubarLabel,
   MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
   MenubarSeparator,
   MenubarShortcut,
   MenubarSub,
@@ -27,8 +21,6 @@ import {
 } from "@booking/@components/ui/tooltip";
 import { sessionAtom, store } from "@booking/config/store";
 import { useAtom } from "jotai";
-import Link from "next/link";
-import { useRouter } from "next/router";
 
 export function Menu() {
   const router = useRouter();
@@ -38,7 +30,7 @@ export function Menu() {
   const logout = async () => {
     await fetch("/api/logout");
 
-    store.set(sessionAtom, undefined);
+    store.set(sessionAtom, null);
 
     router.push("/auth");
   };
@@ -49,7 +41,7 @@ export function Menu() {
         <MenubarMenu>
           <MenubarTrigger
             style={{ marginLeft: "-15px" }}
-            className="font-bold lg:text-xl tracking-tight cursor-pointer"
+            className="font-bold lg:text-xl tracking-tight cursor-pointer mb-2"
           >
             Booking.com
           </MenubarTrigger>
@@ -78,7 +70,7 @@ export function Menu() {
         {session?.user && (
           <MenubarMenu>
             <MenubarTrigger className="relative cursor-pointer">
-              Actions
+              Menu
             </MenubarTrigger>
             <MenubarContent>
               <MenubarSub>
@@ -92,6 +84,12 @@ export function Menu() {
                 </MenubarSubContent>
               </MenubarSub>
               <MenubarSeparator />
+              <Link href="/dashboard/cars">
+                <MenubarItem className="cursor-pointer">
+                  Cars <MenubarShortcut>⌘K</MenubarShortcut>
+                </MenubarItem>
+              </Link>
+              <MenubarSeparator />
               <MenubarItem className="cursor-pointer" onClick={logout}>
                 Log out <MenubarShortcut>⌘P</MenubarShortcut>
               </MenubarItem>
@@ -104,7 +102,7 @@ export function Menu() {
         <TooltipProvider>
           <Tooltip delayDuration={100}>
             <TooltipTrigger asChild>
-              <Avatar className="mb-2 cursor-pointer">
+              <Avatar className="mb-1 cursor-pointer">
                 <AvatarFallback>
                   {session?.user?.username?.charAt(0)?.toUpperCase()}
                 </AvatarFallback>

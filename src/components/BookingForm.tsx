@@ -1,12 +1,13 @@
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@booking/@components/ui/button";
 import { Calendar } from "@booking/@components/ui/calendar";
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  Form,
 } from "@booking/@components/ui/form";
 import {
   Popover,
@@ -14,14 +15,13 @@ import {
   PopoverTrigger,
 } from "@booking/@components/ui/popover";
 import { toast } from "@booking/@components/ui/use-toast";
-import { selectedCarAtom, sessionAtom } from "@booking/config/store";
+import { sessionAtom } from "@booking/config/store";
 import { cn } from "@booking/lib/util";
 import { Car } from "@booking/types/booking";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useAtom } from "jotai";
 import { CalendarIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -31,7 +31,7 @@ interface BookingFormProps {
     start_date: Date,
     end_date: Date,
     total_cost: number,
-    user_id: string
+    user_id: string,
   ) => Promise<void>;
   car: Car;
 }
@@ -45,12 +45,25 @@ const FormSchema = z.object({
   }),
 });
 
-export function BookingForm({ makeReservation }: BookingFormProps) {
+function CarDescription({
+  labelTitle,
+  labelContent,
+}: {
+  labelTitle: string;
+  labelContent: string;
+}) {
+  return (
+    <div className="flex gap-1">
+      <p className="text-sm font-semibold tracking-tight">{labelTitle}</p>
+      <p className="text-sm">{labelContent}</p>
+    </div>
+  );
+}
+
+export function BookingForm({ makeReservation, car }: BookingFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
-
-  const [car] = useAtom(selectedCarAtom);
 
   const [session] = useAtom(sessionAtom);
 
@@ -60,25 +73,7 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
 
   const [carBusyDays, setCarBusyDays] = useState<number[]>([]);
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await makeReservation(
-      car!.id,
-      data.start_date,
-      data.end_date,
-      total,
-      session?.user.id!
-    );
-    toast({
-      title: "Success:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">Your booking was created!</code>
-        </pre>
-      ),
-    });
-  }
-
-  const calculateTotal = () => {
+  const calculateTotal = useCallback(() => {
     const { start_date, end_date } = form.getValues();
 
     if (!start_date || !end_date) return;
@@ -90,11 +85,33 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
     const result = diffInDays * (car?.price_per_day as number);
 
     setTotal(result < 1 ? (car?.price_per_day as number) : result);
-  };
+  }, [car?.price_per_day, form]);
+
+  const onSubmit = useCallback(
+    async (data: z.infer<typeof FormSchema>) => {
+      await makeReservation(
+        car!.id,
+        data.start_date,
+        data.end_date,
+        total,
+        session?.user.id!,
+      );
+
+      toast({
+        title: "Success:",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">Your booking was created!</code>
+          </pre>
+        ),
+      });
+    },
+    [car, session?.user.id, total],
+  );
 
   const getCarAvailability = useCallback(async () => {
     const response = await fetch(
-      `/api/get-car-availability?car_id=${car?.id}&month=${currentMonth}`
+      `/api/get-car-availability?car_id=${car?.id}&month=${currentMonth}`,
     );
 
     const data = await response.json();
@@ -108,28 +125,24 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
 
   return (
     <>
-      <div className="flex gap-1">
-        <p className="text-sm font-semibold tracking-tight">Model:</p>
-        <p className="text-sm">
-          {car?.brand} - {car?.model}
-        </p>
-      </div>
-      <div className="flex gap-1">
-        <p className="text-sm font-semibold tracking-tight">Price per day:</p>
-        <p className="text-sm">${car?.price_per_day}</p>
-      </div>
-      <div className="flex gap-1">
-        <p className="text-sm font-semibold tracking-tight">Engine:</p>
-        <p className="text-sm">{car?.displacement}</p>
-      </div>
-      <div className="flex gap-1">
-        <p className="text-sm font-semibold tracking-tight">Year:</p>
-        <p className="text-sm">{car?.year}</p>
-      </div>
-      <div className="flex gap-1">
-        <p className="text-sm font-semibold tracking-tight">Category:</p>
-        <p className="text-sm">{car?.category}</p>
-      </div>
+      <CarDescription
+        labelTitle="Model:"
+        labelContent={`${car?.brand} - ${car?.model}`}
+      />
+      <CarDescription
+        labelTitle="Price per day:"
+        labelContent={car?.price_per_day?.toString() as string}
+      />
+      <CarDescription
+        labelTitle="Engine:"
+        labelContent={`${car?.displacement}`}
+      />
+      <CarDescription labelTitle="Year:" labelContent={`${car?.year}`} />
+      <CarDescription
+        labelTitle="Category:"
+        labelContent={`${car?.category}`}
+      />
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -145,7 +158,7 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
                         variant={"outline"}
                         className={cn(
                           "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value ? (
@@ -165,10 +178,13 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
                         field.onChange(...args);
                         calculateTotal();
                       }}
-                      onMonthChange={month => setCurrentMonth(month.getMonth())}
+                      onMonthChange={(month) =>
+                        setCurrentMonth(month.getMonth())
+                      }
                       initialFocus
                       disabled={(date: Date) =>
-                        carBusyDays.includes(date.getDate())
+                        carBusyDays.includes(date.getDate()) ||
+                        date < new Date()
                       }
                     />
                   </PopoverContent>
@@ -190,7 +206,7 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
                         variant={"outline"}
                         className={cn(
                           "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value ? (
@@ -210,9 +226,12 @@ export function BookingForm({ makeReservation }: BookingFormProps) {
                         field.onChange(...args);
                         calculateTotal();
                       }}
-                      onMonthChange={month => setCurrentMonth(month.getMonth())}
+                      onMonthChange={(month) =>
+                        setCurrentMonth(month.getMonth())
+                      }
                       disabled={(date: Date) =>
-                        carBusyDays.includes(date.getDate())
+                        carBusyDays.includes(date.getDate()) ||
+                        date < new Date()
                       }
                       initialFocus
                     />

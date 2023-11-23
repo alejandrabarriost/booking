@@ -1,8 +1,8 @@
-import { supabase } from "@booking/supabase/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { sessionOptions } from "@booking/config/session";
+import { supabase } from "@booking/supabase/client";
 import { verify } from "argon2";
 import { withIronSessionApiRoute } from "iron-session/next";
-import { sessionOptions } from "@booking/config/session";
 
 async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const body = JSON.parse(req.body);

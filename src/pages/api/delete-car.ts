@@ -7,7 +7,7 @@ export default async function handler(
 ) {
   const body = JSON.parse(req.body);
 
-  await supabase.from("booking").delete().eq("id", body.id);
+  await supabase.from("cars").delete().eq("id", body.car_id);
 
   res.status(200).end();
 }
